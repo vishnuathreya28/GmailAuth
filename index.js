@@ -6,7 +6,7 @@ const fs = require("fs").promises;
 const { google } = require("googleapis");
 
 const port = 8080;
-// these are the scope that we want to access 
+// these are the scopes that we want to access 
 const SCOPES = [
   "https://www.googleapis.com/auth/gmail.readonly",
   "https://www.googleapis.com/auth/gmail.send",
@@ -15,7 +15,7 @@ const SCOPES = [
 ];
 
 // i kept the label name
-const labelName = "Vacation";
+const labelName = "vacationVishnu";
 
 
 app.get("/", async (req, res) => {
@@ -32,13 +32,13 @@ app.get("/", async (req, res) => {
   const gmail = google.gmail({ version: "v1", auth });
 
 
-  //  here i am finding all the labels availeble on current gmail
+  //finding labels available on gmail
   const response = await gmail.users.labels.list({
     userId: "me",
   });
 
 
-  //  this function is finding all email that have unreplied
+  //finding unreplied mails
   async function getUnrepliesMessages(auth) {
     const gmail = google.gmail({ version: "v1", auth });
     const response = await gmail.users.messages.list({
@@ -50,7 +50,7 @@ app.get("/", async (req, res) => {
     return response.data.messages || [];
   }
 
-  //  this function generating the label ID
+  //generates a label ID
   async function createLabel(auth) {
     const gmail = google.gmail({ version: "v1", auth });
     try {
@@ -82,7 +82,7 @@ app.get("/", async (req, res) => {
     
     const labelId = await createLabel(auth);
 
-    //refreshing in random intervals of 45 and 120seconds
+    //refreshing in random intervals of 45 and 120 seconds
     setInterval(async () => {
       
       const messages = await getUnrepliesMessages(auth);
@@ -126,7 +126,7 @@ app.get("/", async (req, res) => {
 
             await gmail.users.messages.send(replyMessage);
 
-            // Add label and move the email
+            //moving the email to the label from inbox
             gmail.users.messages.modify({
               auth,
               userId: "me",
